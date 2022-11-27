@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -16,7 +15,11 @@ namespace HomeControl
 
             var httpClient = new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) };
 
-            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Access-Control-Allow-Origin", "*");
+            var a1 = httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Access-Control-Allow-Origin", "*");
+            var a2 = httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Access-Control-Allow-Headers", "*");
+            var a3 = httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Access-Control-Expose-Headers", "*");
+            var a4 = httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Access-Control-Allow-Methods", "*");
+            var a5 = httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Access-Control-Allow-Credentials", "true");
 
             builder.Services.AddScoped(sp => httpClient);
 

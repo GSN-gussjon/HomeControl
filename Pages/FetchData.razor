@@ -5,24 +5,14 @@
 
 <h1>HA data test</h1>
 
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <p>State: @state </p>
-}
+<p>State: @state </p>
+
 
 @code {
-    private WeatherForecast[] forecasts;
     private string state;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
-
-
         ClientFactory.Initialize("https://gsnha.duckdns.org:8123", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI5NzZmZWRmNjA5ZGM0YTk5YjY3MDkzZDY2OGQzMTk1MSIsImlhdCI6MTY2OTU2MDYxOCwiZXhwIjoxOTg0OTIwNjE4fQ.d7gA8Xglhv6SCCAfkylB9eM_qykuT_bNpze8wWVZhGY");
 
         var statesClient = ClientFactory.GetClient<StatesClient>();
@@ -31,14 +21,4 @@ else
         this.state = stateObj?.State ?? "NULL";
     }
 
-    public class WeatherForecast
-    {
-        public DateTime Date { get; set; }
-
-        public int TemperatureC { get; set; }
-
-        public string Summary { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-    }
 }
