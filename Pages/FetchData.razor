@@ -11,35 +11,56 @@
 <h1>Lights</h1>
 
 <RadzenCard>
-    <RadzenDataList WrapItems="true" AllowPaging="true" Data="@lights" TItem="HAEntityModel" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true">
+    @*    <RadzenDataList WrapItems="true" AllowPaging="true" Data="@lights" TItem="HAEntityModel" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true">
         <Template Context="light">
-            <RadzenCard Style="width: 100%; padding: 0; overflow: hidden;">
-                <div class="container">
-                    <div class="row" style="margin-left: calc(var(--bs-gutter-x) * -1); margin-right: calc(var(--bs-gutter-x) * -1)">
-                        <div class="col-lg-3 p-3 product-title">
-                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-color-secondary">@(light.Name)</RadzenText>
-                        </div>
-                        <div class="col-lg-7 p-3">
-                            <div class="row d-flex">
-                                <div class="col-md-6 col-lg-2">
-                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="mb-0">Id</RadzenText>
-                                    <RadzenText TextStyle="TextStyle.Body2" class="mb-sm-2 mb-lg-0">@(light.Id)</RadzenText>
-                                </div>
+        <RadzenCard Style="width: 100%; padding: 0; overflow: hidden;">
+        <div class="container">
+        <div class="row" style="margin-left: calc(var(--bs-gutter-x) * -1); margin-right: calc(var(--bs-gutter-x) * -1)">
+        <div class="col-lg-3 p-3 product-title">
+        <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-color-secondary">@(light.Name)</RadzenText>
+        </div>
+        <div class="col-lg-7 p-3">
+        <div class="row d-flex">
+        <div class="col-md-6 col-lg-2">
+        <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="mb-0">Id</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body2" class="mb-sm-4 mb-lg-0">@(light.Id)</RadzenText>
+        </div>
 
-                                <div class="col-md-6 col-lg-2">
-                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="mb-0">State</RadzenText>
-                                    <RadzenText TextStyle="TextStyle.Body2" class="mb-sm-2 mb-lg-0">@(light.State)</RadzenText>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 p-3">
-                            <RadzenButton Text="Toggle" Click=@(args => OnToggle(light.Id)) Class="w-100" />
-                        </div>
-                    </div>
-                </div>
-            </RadzenCard>
+        <div class="col-md-6 col-lg-2">
+        <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="mb-0">State</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body2" class="mb-sm-2 mb-lg-0">@(light.State)</RadzenText>
+        </div>
+        </div>
+        </div>
+        <div class="col-lg-2 p-3">
+        <RadzenButton Text="Toggle" Click=@(args => OnToggle(light.Id)) Class="w-100" />
+        </div>
+        </div>
+        </div>
+        </RadzenCard>
         </Template>
-    </RadzenDataList>
+        </RadzenDataList>*@
+
+    @if (lights == null || lights?.Any() != true)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                    Data="@lights" TItem="HAEntityModel" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+            <Columns>
+                <RadzenDataGridColumn TItem="HAEntityModel" Property="Id" Filterable="false" Title="ID" Width="80px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="HAEntityModel" Property="State" Filterable="false" Title="State" Width="80px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="HAEntityModel" Title="Actions" Sortable="false" Width="80px" TextAlign="TextAlign.Center">
+                    <Template Context="data">
+                        <RadzenButton Text="Toggle" Click=@(args => OnToggle(@data.Id)) />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    }
+
 
 </RadzenCard>
 
@@ -51,32 +72,48 @@
     {
         lights = new List<HAEntityModel>();
         var result = await entityClient.GetEntities("light");
+        var services = await serviceClient.GetServices();
 
         foreach (var elem in result)
         {
             var state = await statesClient.GetState(elem);
             var light = new HAEntityModel()
-            {
-                Id = elem,
-                State = state.State
-            };
+                {
+                    Id = elem,
+                    State = state.State,
+                    Name = state.ToString()
+                };
 
             lights.Add(light);
         }
 
+        //foreach (var service in services)
+        //{
+        //    var model = new HAEntityModel()
+        //        {
+        //            Name = service.Domain,
+        //            Id = string.Join(",", service.FlatServiceList)
+        //        };
+        //        lights.Add(model);
+        //}
 
     }
 
-
-
-    private async void OnToggle(string id)
+    private async Task OnToggle(string id)
     {
-        Console.WriteLine("1");
-        var result = await serviceClient.CallService("light", "toggle", new { entity_id = id });
+        try
+        {
+            var result = await serviceClient.CallService("light", "toggle", new { entity_id = id });
 
-        Console.WriteLine("2");
-        Console.WriteLine(result);
-        salonLightToggleResult = result?.FirstOrDefault()?.State;
+            var light = lights.FirstOrDefault(x => x.Id == id);
+            light.State = result.First().State;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+
+        }
+
     }
 }
 
