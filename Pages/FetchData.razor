@@ -3,19 +3,26 @@
 @using HADotNet.Core.Clients
 @inject HttpClient Http
 @inject StatesClient statesClient;
+@inject ServiceClient serviceClient;
 
-<h1>HA data test</h1>
+<h1>Test page ³³³</h1>
 
-<p>State: @state </p>
 
+<RadzenButton Text="Prze³¹cz œwiat³o" Click="@TestButtonClicked"></RadzenButton>
+<p>Result:  @salonLightToggleResult</p>
 
 @code {
-    private string state;
+    private string salonLightToggleResult;
 
-    protected override async Task OnInitializedAsync()
+    private async void TestButtonClicked()
     {
-        var stateObj = await statesClient.GetState("sun.sun");
-        this.state = stateObj?.State ?? "NULL";
-    }
+        Console.WriteLine("1");
+        var result = await serviceClient.CallService("light", "toggle", new { entity_id = "light.salon_lights" });
 
+        Console.WriteLine("2");
+        Console.WriteLine(result);
+        salonLightToggleResult = result?.FirstOrDefault()?.State;
+    }
 }
+
+
