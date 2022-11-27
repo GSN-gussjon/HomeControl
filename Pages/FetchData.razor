@@ -2,6 +2,7 @@
 @using HADotNet.Core
 @using HADotNet.Core.Clients
 @inject HttpClient Http
+@inject StatesClient statesClient;
 
 <h1>HA data test</h1>
 
@@ -13,11 +14,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ClientFactory.Initialize("https://gsnha.duckdns.org:8123", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI5NzZmZWRmNjA5ZGM0YTk5YjY3MDkzZDY2OGQzMTk1MSIsImlhdCI6MTY2OTU2MDYxOCwiZXhwIjoxOTg0OTIwNjE4fQ.d7gA8Xglhv6SCCAfkylB9eM_qykuT_bNpze8wWVZhGY");
-
-        var statesClient = ClientFactory.GetClient<StatesClient>();
         var stateObj = await statesClient.GetState("sun.sun");
-
         this.state = stateObj?.State ?? "NULL";
     }
 
