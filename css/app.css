@@ -1,7 +1,11 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+* {
+    font-family: 'Times New Roman';
+}
+
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Times New Roman';
 }
 
 a, .btn-link {
