@@ -1,11 +1,7 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HomeControl
@@ -19,7 +15,19 @@ namespace HomeControl
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-            await builder.Build().RunAsync();
+            builder.Services.AddCors(o =>
+            {
+                o.AddDefaultPolicy(policy =>
+                                   {
+                                       policy.WithOrigins("https://gsnha.duckdns.org:8123").AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+                                   });
+            });
+
+
+            var app = builder.Build();
+
+
+            await app.RunAsync();
         }
     }
 }

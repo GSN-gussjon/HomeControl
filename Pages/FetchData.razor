@@ -1,4 +1,6 @@
 @page "/fetchdata"
+@using HADotNet.Core
+@using HADotNet.Core.Clients
 @inject HttpClient Http
 
 <h1>Weather forecast</h1>
@@ -11,35 +13,24 @@
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <p>State: @state </p>
 }
 
 @code {
     private WeatherForecast[] forecasts;
+    private string state;
 
     protected override async Task OnInitializedAsync()
     {
         forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+
+
+        ClientFactory.Initialize("https://gsnha.duckdns.org:8123", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI5NzZmZWRmNjA5ZGM0YTk5YjY3MDkzZDY2OGQzMTk1MSIsImlhdCI6MTY2OTU2MDYxOCwiZXhwIjoxOTg0OTIwNjE4fQ.d7gA8Xglhv6SCCAfkylB9eM_qykuT_bNpze8wWVZhGY");
+
+        var statesClient = ClientFactory.GetClient<StatesClient>();
+        var stateObj = await statesClient.GetState("sun.sun");
+
+        this.state = stateObj?.State ?? "NULL";
     }
 
     public class WeatherForecast
