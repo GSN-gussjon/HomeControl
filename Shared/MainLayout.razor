@@ -4,12 +4,12 @@
     <RadzenHeader>
         <div class="d-flex align-items-center">
             <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
-            <RadzenLabel Text="Header" />
+            <RadzenLabel Text="Home Control" />
         </div>
     </RadzenHeader>
     <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Home" Icon="home" Path="/" />
+            <RadzenPanelMenuItem Text="Home" Icon="home" Path="Home" />
             <RadzenPanelMenuItem Text="Test page" Icon="dashboard" Path="fetchdata" />
         </RadzenPanelMenu>
     </RadzenSidebar>

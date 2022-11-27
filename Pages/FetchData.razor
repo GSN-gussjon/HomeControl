@@ -1,23 +1,78 @@
 @page "/fetchdata"
 @using HADotNet.Core
 @using HADotNet.Core.Clients
+@using HADotNet.Entities.Models
+@using HomeControl.Models
 @inject HttpClient Http
 @inject StatesClient statesClient;
 @inject ServiceClient serviceClient;
+@inject EntityClient entityClient;
 
-<h1>Test page ³³³</h1>
+<h1>Lights</h1>
 
+<RadzenCard>
+    <RadzenDataList WrapItems="true" AllowPaging="true" Data="@lights" TItem="HAEntityModel" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true">
+        <Template Context="light">
+            <RadzenCard Style="width: 100%; padding: 0; overflow: hidden;">
+                <div class="container">
+                    <div class="row" style="margin-left: calc(var(--bs-gutter-x) * -1); margin-right: calc(var(--bs-gutter-x) * -1)">
+                        <div class="col-lg-3 p-3 product-title">
+                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-color-secondary">@(light.Name)</RadzenText>
+                        </div>
+                        <div class="col-lg-7 p-3">
+                            <div class="row d-flex">
+                                <div class="col-md-6 col-lg-2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="mb-0">Id</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2" class="mb-sm-2 mb-lg-0">@(light.Id)</RadzenText>
+                                </div>
 
-<RadzenButton Text="Prze³¹cz œwiat³o" Click="@TestButtonClicked"></RadzenButton>
-<p>Result:  @salonLightToggleResult</p>
+                                <div class="col-md-6 col-lg-2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="mb-0">State</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2" class="mb-sm-2 mb-lg-0">@(light.State)</RadzenText>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 p-3">
+                            <RadzenButton Text="Toggle" Click=@(args => OnToggle(light.Id)) Class="w-100" />
+                        </div>
+                    </div>
+                </div>
+            </RadzenCard>
+        </Template>
+    </RadzenDataList>
+
+</RadzenCard>
 
 @code {
     private string salonLightToggleResult;
+    private List<HAEntityModel> lights;
 
-    private async void TestButtonClicked()
+    protected override async Task OnInitializedAsync()
+    {
+        lights = new List<HAEntityModel>();
+        var result = await entityClient.GetEntities("light");
+
+        foreach (var elem in result)
+        {
+            var state = await statesClient.GetState(elem);
+            var light = new HAEntityModel()
+            {
+                Id = elem,
+                State = state.State
+            };
+
+            lights.Add(light);
+        }
+
+
+    }
+
+
+
+    private async void OnToggle(string id)
     {
         Console.WriteLine("1");
-        var result = await serviceClient.CallService("light", "toggle", new { entity_id = "light.salon_lights" });
+        var result = await serviceClient.CallService("light", "toggle", new { entity_id = id });
 
         Console.WriteLine("2");
         Console.WriteLine(result);
