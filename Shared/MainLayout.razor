@@ -9,8 +9,10 @@
     </RadzenHeader>
     <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Home" Icon="home" Path="Home" />
-            <RadzenPanelMenuItem Text="Test page" Icon="dashboard" Path="fetchdata" />
+            <RadzenPanelMenuItem Text="Panel główny" Icon="home" Path="Home" />
+            <RadzenPanelMenuItem Text="Encje" Icon="dashboard">
+                <RadzenPanelMenuItem Text="Światła" Icon="lightbulb" Path="fetchdata" />
+            </RadzenPanelMenuItem>
         </RadzenPanelMenu>
     </RadzenSidebar>
     <RadzenBody>

@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Pages\FetchData.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Pages\FetchData.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="HADotNet.Core" Version="1.6.0" />
     <PackageReference Include="HADotNet.Entities" Version="0.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.1" />
