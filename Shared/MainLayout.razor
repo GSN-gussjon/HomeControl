@@ -1,11 +1,11 @@
 ﻿@using HomeControl.Static
 @inherits LayoutComponentBase
 
-@if (!StaticConfiguration.Logged)
+@*@if (!StaticConfiguration.Logged)
 {
     <HomeControl.Pages.Login />
 }
-else
+else*@
 {
     <RadzenLayout class="rz-shadow-3" Style="grid-template-columns: auto 1fr auto; grid-template-areas: 'rz-header rz-header rz-header' 'rz-sidebar rz-body rz-right-sidebar'">
         <RadzenHeader>
@@ -26,7 +26,7 @@ else
             @Body
         </RadzenBody>
     </RadzenLayout>
-}
+@*}*@
 @code {
     private bool collapseNavMenu = true;
     bool sidebar1Expanded = true;
