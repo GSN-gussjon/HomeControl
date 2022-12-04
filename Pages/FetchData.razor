@@ -1,9 +1,13 @@
 @page "/fetchdata"
+@page "/fetchdata/{authToken}"
+@inherits AuthComponentBase
 @using HADotNet.Core
 @using HADotNet.Core.Clients
 @using HADotNet.Entities.Models
+@using HomeControl.Components
 @using HomeControl.Dictionaries
 @using HomeControl.Models
+@using HomeControl.Services
 @inject HttpClient Http
 @inject StatesClient statesClient;
 @inject ServiceClient serviceClient;
@@ -75,25 +79,15 @@ else
     {
         try
         {
-            
+
         }
         catch (Exception ex)
         {
-            
+
         }
     }
-    #endregion
 
-    #region Private methods
-    private void UpdateLightState(string id, string state)
-    {
-        var light = lights.FirstOrDefault(x => x.Id == id);
-        light.State = state;
-    }
-    #endregion
-
-    #region Override
-    protected override async Task OnInitializedAsync()
+    private async Task LoadData()
     {
         lights = new List<HAEntityModel>();
         var result = await entityClient.GetEntities("light");
@@ -111,7 +105,23 @@ else
 
             lights.Add(light);
         }
+    }
+    #endregion
 
+    #region Private methods
+    private void UpdateLightState(string id, string state)
+    {
+        var light = lights.FirstOrDefault(x => x.Id == id);
+        light.State = state;
+    }
+    #endregion
+
+    #region Override
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        await LoadData();
     }
     #endregion
 }

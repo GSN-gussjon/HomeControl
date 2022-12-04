@@ -1,5 +1,8 @@
-﻿@using HomeControl.Static
+﻿@using HomeControl.Services
+@using HomeControl.Static
+@using System.Text
 @inject NavigationManager UriHelper
+@inject AuthService authService
 
 <div class="container-fluid">
     <div class="row d-flex px-3">
@@ -9,8 +12,9 @@
                     <RadzenText TextStyle="TextStyle.DisplayH3" TagName="TagName.H2" Class="rz-color-white mb-0">Home Control</RadzenText>
                 </RadzenCard>
                 <RadzenCard Class="rz-shadow-0 p-5">
-                    <RadzenTemplateForm Data=@("SimpleLogin") >
-                        <RadzenLogin AllowRegister="false" AllowResetPassword="false" Login=@(args => OnLogin(args, "Simple login")) />
+                    <RadzenTemplateForm Data=@("SimpleLogin")>
+
+                        <RadzenLogin AllowRegister="false" AllowResetPassword="false" AllowRememberMe="true" Login=@(args => OnLogin(args, "Simple login")) />
                     </RadzenTemplateForm>
                 </RadzenCard>
             </RadzenCard>
@@ -19,10 +23,11 @@
 </div>
 
 @code {
-    void OnLogin(LoginArgs args, string name)
+    private async Task OnLogin(LoginArgs args, string name)
     {
-        Console.WriteLine($"{name} -> Username: {args.Username}, password: {args.Password}, remember me: {args.RememberMe}");
-        StaticConfiguration.Logged = true;
-        UriHelper.NavigateTo("Home");
+        var password = MD5.Calculate(Encoding.ASCII.GetBytes(args.Password));
+        var logged = await authService.Login(args.Username, password);
+        if (logged)
+            UriHelper.NavigateTo("Home");
     }
 }
