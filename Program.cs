@@ -21,6 +21,8 @@ namespace HomeControl
 
             builder.Services.AddScoped(sp => httpClient);
 
+            builder.Services.AddSingleton<Blazored.LocalStorage.ISyncLocalStorageService, Blazored.LocalStorage.LocalStorageService>();
+
             //Radzen
             builder.Services.AddScoped<DialogService>();
             builder.Services.AddScoped<NotificationService>();

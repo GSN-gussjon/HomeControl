@@ -1,0 +1,62 @@
+@page "/foodmenu"
+@page "/foodmenu/{authToken}"
+@inherits AuthComponentBase
+@using HADotNet.Core
+@using HADotNet.Core.Clients
+@using HADotNet.Entities.Models
+@using HomeControl.Components
+@using HomeControl.Dictionaries
+@using HomeControl.Models
+@using HomeControl.Services
+@using HomeControl.DBModels
+@inject HttpClient Http
+@inject StatesClient statesClient
+@inject ServiceClient serviceClient
+@inject EntityClient entityClient
+@inject SqlService sqlService
+
+@if (foodMenu == null || foodMenu?.Any() != true)
+{
+    <LoadingIndicator />
+}
+else
+{
+    <RadzenCard>
+        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                    Data="@foodMenu" TItem="HomeControl.DBModels.FoodMenu"  ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" PageSize="20">
+            <Columns>
+                <RadzenDataGridColumn TItem="HomeControl.DBModels.FoodMenu" Property="Name" Filterable="false" Title="Nazwa" Width="80px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="HomeControl.DBModels.FoodMenu" Property="Description" Filterable="false" Title="Opis" Width="80px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="HomeControl.DBModels.FoodMenu" Property="Recipe" Filterable="false" Title="Przepis" Width="80px" TextAlign="TextAlign.Center" />
+            </Columns>
+        </RadzenDataGrid>
+
+    </RadzenCard>
+}
+
+@code {
+    #region Private members
+    private IEnumerable<HomeControl.DBModels.FoodMenu> foodMenu;
+    #endregion
+
+    #region Click commands
+
+    private async Task LoadData()
+    {
+        foodMenu = await sqlService.GetFoodMenu();
+    }
+    #endregion
+
+    #region Private methods
+    //
+    #endregion
+
+    #region Override
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        await LoadData();
+    }
+    #endregion
+}

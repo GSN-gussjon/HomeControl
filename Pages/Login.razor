@@ -26,7 +26,8 @@
     private async Task OnLogin(LoginArgs args, string name)
     {
         var password = MD5.Calculate(Encoding.ASCII.GetBytes(args.Password));
-        var logged = await authService.Login(args.Username, password);
+        var logged = await authService.Login(args.Username, password, args.RememberMe);
+
         if (logged)
             UriHelper.NavigateTo("Home");
     }

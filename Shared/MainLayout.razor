@@ -12,13 +12,20 @@ else
     <RadzenLayout class="rz-shadow-3" Style="grid-template-columns: auto 1fr auto; grid-template-areas: 'rz-header rz-header rz-header' 'rz-sidebar rz-body rz-right-sidebar'">
         <RadzenHeader>
             <div class="d-flex align-items-center">
-                <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
-                <RadzenLabel Text="Home Control" />
+                <div class="col-md-11" style="float: left;">
+                    <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
+                    <RadzenLabel Text="Home Control" Style="vertical-align: super" />
+                </div>
+
+                <div class="align-items-center col-md-1">
+                    <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="logout" Click="@(args => OnLogout())" Style="float: right" />
+                </div>
             </div>
         </RadzenHeader>
         <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
             <RadzenPanelMenu>
                 <RadzenPanelMenuItem Text="Panel główny" Icon="home" Path="Home" />
+                <RadzenPanelMenuItem Text="Menu" Icon="restaurant" Path="foodmenu" />
                 <RadzenPanelMenuItem Text="Encje" Icon="dashboard">
                     <RadzenPanelMenuItem Text="Światła" Icon="lightbulb" Path="fetchdata" />
                 </RadzenPanelMenuItem>
@@ -38,5 +45,17 @@ else
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override void OnInitialized()
+    {
+        authService.CheckLogin();
+
+        base.OnInitialized();
+    }
+
+    private void OnLogout()
+    {
+        authService.Logout();
     }
 }
